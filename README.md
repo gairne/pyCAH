@@ -28,7 +28,7 @@ ToDo:
 -----
 
 1) Icons for official expansions 1-6, reject pack, box expansion, various holiday expansions and science expansion. This is a low priority as these expansions are readily for sale. Research into whether AU or CA versions have icons.
-2) Adding n / m numbers to cards, used by some of the PAX expansions. Note that the black-pick2 from pax east has the n / m text in a different place.
+2) Adding n / m numbers to cards, used by some of the PAX expansions. Note that the black-pick2 from pax east has the n / m text in a different place. This needs testing.
 3) Batch card creation support.
 4) Full reject card support - ladle icon, ink blot, author portraits.
 

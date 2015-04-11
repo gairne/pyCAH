@@ -15,7 +15,7 @@ parser.add_argument("-t", "--text", action='store', type=str, help="Optional. Th
 parser.add_argument("-f", "--font", action='store', type=str, help="Optional. The font (file) to use for the card text. The official cards use Helvetica Neue Bold.", required=False, dest="font", metavar="HelveticaNeueBold.ttf")
 parser.add_argument("-o", "--output", action='store', type=str, help="The output image filename.", required=True)
 parser.add_argument("-v", "--verbose", action='store_true', help="Turn on verbose mode. Any shell commands executed (and their results) are printed.")
-
+parser.add_argument("-n", "--number", action='store', type=str, help="Optional. Add a number caption on the bottom right hand side of the card. This is used for some of the PAX expansions.", metavar="1 / 44", required=False)
 
 def perform(commandString, verbose=False):
     if verbose:
@@ -26,7 +26,7 @@ def perform(commandString, verbose=False):
       print (stdout, stderr)
     return (stdout, stderr)
 
-def createCard(outputFn, background, font=None, icon=None, text=None, verbose=False):
+def createCard(outputFn, background, font=None, icon=None, text=None, numberText=None, verbose=False):
     cardTextBg = ""
     cardTextFg = ""
     
@@ -106,9 +106,9 @@ def createCard(outputFn, background, font=None, icon=None, text=None, verbose=Fa
         font = "HelveticaNeueBold"
 
     # Perform the card creation.
-    stdout, stderr = perform("convert \( -page +0+0 " + background + " \)" + (" -page +605+3865 -background none \( " + icon + " -rotate 17 \)" if (icon != "" and icon != None) else "") + (" -page +444+444 -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 15 -kerning -1 -density 1200 -size 2450x caption:\"" + text + "\"" if (text != "" and text != None) else "") + " -layers merge " + outputFn, verbose=verbose)
+    stdout, stderr = perform("convert \( -page +0+0 " + background + " \)" + (" -page +605+3865 -background none \( " + icon + " -rotate 17 \)" if (icon != "" and icon != None) else "") + (" -page +444+444 -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 15 -kerning -1 -density 1200 -size 2450x caption:\"" + text + "\"" if (text != "" and text != None) else "") + (" -page +1950+3590 " if "front-black-pick2" in background else " -page +1850+3910 ") " -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 5 -kerning -1 -density 1200 -size 900x -gravity East caption:\"" + numberText + "\"" if (numberText != "" and numberText != None) else "") + " -layers merge " + outputFn, verbose=verbose)
 
 ######
 
 args = parser.parse_args()
-createCard(args.output, args.background, args.font, args.icon, " ".join(args.text) if args.text != None else None, verbose=args.verbose)
+createCard(args.output, args.background, args.font, args.icon, " ".join(args.text) if args.text != None else None, args.number, args.verbose)
