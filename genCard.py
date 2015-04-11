@@ -8,15 +8,6 @@
 
 import argparse, subprocess, sys, os, os.path
 
-parser = argparse.ArgumentParser(description='Produce a custom card for Cards Against Humanity in PNG format.')
-parser.add_argument("-i", "--icon", action='store', type=str, help="Optional. A filename for the icon in the logo towards the bottom of the card. If not supplied, no icon is used. An icon should be 140 pixels by 140 pixels.", required=False, dest="icon", metavar="icon.png")
-parser.add_argument("-b", "--background", action='store', type=str, help="A filename for the card background. A white card is typically 'background/white.png', black cards 'background/black.png' and pick 2 black cards are 'black_pick2.png'. To generate high quality cards, the background must be 3300 by 4500.", required=True, metavar="background")
-parser.add_argument("-t", "--text", action='store', type=str, help="Optional. The main card text. To create cards without text, such as the sloth card, do not supply this option.", required=False, dest="text", nargs="+")
-parser.add_argument("-f", "--font", action='store', type=str, help="Optional. The font (file) to use for the card text. The official cards use Helvetica Neue Bold.", required=False, dest="font", metavar="HelveticaNeueBold.ttf")
-parser.add_argument("-o", "--output", action='store', type=str, help="The output image filename.", required=True)
-parser.add_argument("-v", "--verbose", action='store_true', help="Turn on verbose mode. Any shell commands executed (and their results) are printed.")
-parser.add_argument("-n", "--number", action='store', type=str, help="Optional. Add a number caption on the bottom right hand side of the card. This is used for some of the PAX expansions.", metavar="1 / 44", required=False)
-
 def perform(commandString, verbose=False):
     if verbose:
         print "Executing: " + str(commandString)
@@ -29,6 +20,13 @@ def perform(commandString, verbose=False):
 def createCard(outputFn, background, font=None, icon=None, text=None, numberText=None, verbose=False):
     cardTextBg = ""
     cardTextFg = ""
+    
+    if (background != None):
+        background = os.path.expanduser(background)
+    if (icon != None):
+        icon = os.path.expanduser(icon)
+    if (font != None):
+        font = os.path.expanduser(font)
     
     # Check that imagemagick installed.
     stdout, stderr = perform("convert -version", verbose=verbose)
@@ -106,9 +104,21 @@ def createCard(outputFn, background, font=None, icon=None, text=None, numberText
         font = "HelveticaNeueBold"
 
     # Perform the card creation.
-    stdout, stderr = perform("convert \( -page +0+0 " + background + " \)" + (" -page +605+3865 -background none \( " + icon + " -rotate 17 \)" if (icon != "" and icon != None) else "") + (" -page +444+444 -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 15 -kerning -1 -density 1200 -size 2450x caption:\"" + text + "\"" if (text != "" and text != None) else "") + (" -page +1950+3590 " if "front-black-pick2" in background else " -page +1850+3910 ") " -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 5 -kerning -1 -density 1200 -size 900x -gravity East caption:\"" + numberText + "\"" if (numberText != "" and numberText != None) else "") + " -layers merge " + outputFn, verbose=verbose)
+    stdout, stderr = perform("convert \( -page +0+0 " + background + " \)" + (" -page +605+3865 -background none \( " + icon + " -rotate 17 \)" if (icon != "" and icon != None) else "") + (" -page +444+444 -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 15 -kerning -1 -density 1200 -size 2450x caption:\"" + text + "\"" if (text != "" and text != None) else "") + ((" -page +1950+3590 " if "front-black-pick2" in background else " -page +1850+3910 ") + " -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 5 -kerning -1 -density 1200 -size 900x -gravity East caption:\"" + numberText + "\"" if (numberText != "" and numberText != None) else "") + " -layers merge " + outputFn, verbose=verbose)
 
 ######
 
-args = parser.parse_args()
-createCard(args.output, args.background, args.font, args.icon, " ".join(args.text) if args.text != None else None, args.number, args.verbose)
+def main():
+    parser = argparse.ArgumentParser(description='Produce a custom card for Cards Against Humanity in PNG format.')
+    parser.add_argument("-i", "--icon", action='store', type=str, help="Optional. A filename for the icon in the logo towards the bottom of the card. If not supplied, no icon is used. An icon should be 140 pixels by 140 pixels.", required=False, dest="icon", metavar="icon.png")
+    parser.add_argument("-b", "--background", action='store', type=str, help="A filename for the card background. A white card is typically 'background/white.png', black cards 'background/black.png' and pick 2 black cards are 'black_pick2.png'. To generate high quality cards, the background must be 3300 by 4500.", required=True, metavar="background")
+    parser.add_argument("-t", "--text", action='store', type=str, help="Optional. The main card text. To create cards without text, such as the sloth card, do not supply this option.", required=False, dest="text", nargs="+")
+    parser.add_argument("-f", "--font", action='store', type=str, help="Optional. The font (file) to use for the card text. The official cards use Helvetica Neue Bold.", required=False, dest="font", metavar="HelveticaNeueBold.ttf")
+    parser.add_argument("-o", "--output", action='store', type=str, help="The output image filename.", required=True)
+    parser.add_argument("-v", "--verbose", action='store_true', help="Turn on verbose mode. Any shell commands executed (and their results) are printed.")
+    parser.add_argument("-n", "--number", action='store', type=str, help="Optional. Add a number caption on the bottom right hand side of the card. This is used for some of the PAX expansions.", metavar="1 / 44", required=False)
+    args = parser.parse_args()
+    createCard(args.output, args.background, args.font, args.icon, " ".join(args.text) if args.text != None else None, args.number, args.verbose)
+
+if __name__ == '__main__':
+    main()
