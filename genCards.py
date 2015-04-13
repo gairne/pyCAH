@@ -34,36 +34,91 @@ front-white.png,icon-PAX,1 / 44,Assumes front-white.png is in background directo
 ~/pyCAH/backgrounds/front-white.png,icons/icon-PAX.png,1 / 44,Path to background example.
 """
 
+# Todo:
+#   Handle acceptable permutations of background / icon
+#   Generate card backs
 def createCards(inputFile, outputDir, prefix="", offset=1, verbose=False):
-    # Check outputDir either doesn't exist (then create it) or if it does exist, check it's a dir. Check if empty. If not, warn. Prompt user if they want to continue.
-    # Check offset is a number
-    # Check prefix is a string
-    # Load file and check
-    # Check that input and output exist
     # Allow file to specify the card number and prefix? If so warn command line flags are overriden if supplied.
     print (inputFile, outputDir, prefix, offset, verbose)
     
+    # Check offset is a number
+    if (type(offset) != type(0)):
+      print "Error: The supplied offset is not an integer number: " + str(offset)
+      sys.exit(1)
+    # Check prefix is a string
+    if (type(prefix) != type("")):
+      print "Error: The supplied offset is not a string: " + str(prefix)
+      sys.exit(1)
+    # Check inputFile is a string
+    if (type(inputFile) != type("")):
+      print "Error: The supplied input file is not a string: " + str(inputFile)
+      sys.exit(1)
+    # Check inputFile is a string
+    if (type(outputDir) != type("")):
+      print "Error: The supplied output directory is not a string: " + str(outputDir)
+      sys.exit(1)
+      
+    if (offset != None and offset <= 0):
+      print "Error: Offset should be 1 or greater."
+      sys.exit(1)
     
+    if (outputDir != None):
+        outputDir = os.path.expanduser(outputDir)
+    if (inputFile != None):
+        inputFile = os.path.expanduser(inputFile)
+    
+    # Check that the output is a valid directory. If not, create it. Warn if the directory is not empty.
+    if (os.path.exists(outputDir)):
+      if (os.path.isfile(outputDir)):
+        print "Error: The supplied output directory already exists as a file: " + outputDir
+        sys.exit(1)
+      else:
+        if (os.listdir(outputDir) != []):
+          promptSuccess = False
+          print "Warning: The supplied output directory is not empty. If you continue, files may be overwritten."
+          while (not promptSuccess):
+            ui = raw_input('Do you want to continue? [y/n]')
+            if (ui.lower() == "y" or ui.lower() == "yes"):
+              promptSuccess = True
+            elif (ui.lower() == "n" or ui.lower() == "no"):
+              sys.exit(0)
+            else:
+              print "Please enter 'y' or 'n'"
+    else:
+      os.makedirs(outputDir)
+    
+    # Check that the input exists
+    if not (os.path.exists(inputFile) and os.path.isfile(inputFile)):
+        print "Error: The supplied input file does not exist. File not found: " + inputFile
+        sys.exit(1)
+        
     # Check parameters
     ifh = open(inputFile, "r")
     
     n = offset
-    for line in ifh.readlines():
-        cols = line.strip().split(",")
-        if len(cols) < 4:
-            print "Error on line %d, expected at least 3 commas. Skipping: %s" % (offset-n+1, line)
-            n += 1
-            continue
-            
-        outputFn = prefix + "%03d" % (offset,) + ".png"
-        background = cols[0]
-        font = "font/HelveticaNeueBold.ttf"
-        icon = cols[1]
-        numberText = cols[2]
-        cardText = ",".join(cols[3:])
-        
-        createCard(outputFn, background, font, icon, cardText, numberText, verbose)
-        n += 1
+    for line in ifh.readlines():      
+      cols = line.strip().split(",")
+      if len(cols) < 4:
+          print "Error on line %d, expected at least 3 commas. Skipping: %s" % (offset-n+1, line)
+          continue
+
+      outputFn = prefix + "%03d" % (n,) + ".png"
+      background = cols[0]
+      font = "font/HelveticaNeueBold.ttf"
+      icon = cols[1]
+      numberText = cols[2]
+      cardText = ",".join(cols[3:])
+      
+      if (background[0] == "#" and icon[0] == "#" and numberText[0] == "#" and cardText[0] == "#"):
+        if verbose:
+          print "Skipping header"
+        continue
+      
+      if verbose:
+        print "Creating card %s with:\n\tbackground: %s\n\tfont: %s\n\ticon: %s\n\tCardText: %s\n\tNumberText: %s\n" % (outputFn, background, font, icon, cardText, numberText)
+      
+      createCard(outputDir + "/" + outputFn, background, font, icon, cardText, numberText, verbose)
+      n += 1
 
 ######
 
@@ -87,10 +142,6 @@ def main():
         
     if (args.output == None or args.output == ""):
         args.output = os.getcwd() + "/"
-    
-    if (args.offset != None and args.offset <= 0):
-        print "Error: Offset should be 1 or greater."
-        sys.exit(1)
     
     createCards(args.input, args.output, "" if args.prefix == None else args.prefix, 1 if args.offset == None else args.offset, args.verbose)
 
