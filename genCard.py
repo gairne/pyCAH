@@ -6,7 +6,7 @@
 # Cards Against Humanity is a card game produced by Cards Against Humanity LLC and is released under a Creative Commons BY-NC-SA 2.0 license
 # Information is available at https://cardsagainsthumanity.com/
 
-import argparse, subprocess, sys, os, os.path
+import argparse, subprocess, sys, os, os.path, shutil
 
 def perform(commandString, verbose=False):
     if verbose:
@@ -110,6 +110,13 @@ def createCard(outputFn, background, font=None, icon=None, text=None, numberText
 
     # Perform the card creation.
     stdout, stderr = perform("convert \( -page +0+0 " + background + " \)" + (" -page +605+3865 -background none \( " + icon + " -rotate 17 \)" if (icon != "" and icon != None) else "") + (" -page +444+444 -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 15 -kerning -1 -density 1200 -size 2450x caption:\"" + text + "\"" if (text != "" and text != None) else "") + ((" -page +1950+3590 " if "front-black-pick2" in background else " -page +1850+3910 ") + " -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 5 -kerning -1 -density 1200 -size 900x -gravity East caption:\"" + numberText + "\"" if (numberText != "" and numberText != None) else "") + " -layers merge " + outputFn, verbose=verbose)
+    
+    if ("white" in background and not "black" in background):
+        shutil.copy("background/back-white.png", outputFn[:-4] + "back" + outputFn[-4:])
+    elif ("black" in background and not "white" in background):
+        shutil.copy("background/back-black.png", outputFn[:-4] + "back" + outputFn[-4:])
+    else:
+        print "Warning: Couldn't determine which card back to use."
 
 ######
 
