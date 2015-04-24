@@ -11,4 +11,4 @@ import subprocess, os, shutil
 from genCards import createCards
 #createCards(inputFile, outputDir, prefix="", offset=1, verbose=False)
 
-createCards(os.getcwd() + "/sample/reject.csv", os.getcwd() + "/generated/reject/", "reject-", 1, True)
+createCards(os.getcwd() + "/sample/reject.csv", os.getcwd() + "/generated/reject/", "reject-", 1, False)

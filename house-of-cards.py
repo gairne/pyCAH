@@ -6,9 +6,9 @@
 # Cards Against Humanity is a card game produced by Cards Against Humanity LLC and is released under a Creative Commons BY-NC-SA 2.0 license
 # Information is available at https://cardsagainsthumanity.com/
 
-import subprocess, os
+import subprocess, os, shutil
 
 from genCards import createCards
 #createCards(inputFile, outputDir, prefix="", offset=1, verbose=False)
 
-createCards(os.getcwd() + "/sample/house-of-cards.csv", os.getcwd() + "/generated/house-of-cards/", "HoC-", 1, True)
+createCards(os.getcwd() + "/sample/house-of-cards.csv", os.getcwd() + "/generated/house-of-cards/", "HoC-", 1, False)
