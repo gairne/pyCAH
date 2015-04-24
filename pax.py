@@ -13,7 +13,7 @@ from genCards import createCards
 
 createCards(os.getcwd() + "/sample/pax-east-2013.csv", os.getcwd() + "/generated/pax/east2013/", "PAX-east-2013-", 1, True)
 shutil.copy(os.getcwd() + "/sample/PAX-east-2013-030.png", os.getcwd() + "/generated/pax/east2013/PAX-east-2013-030.png")
-shutil.copy(os.getcwd() + "/background/back-black.png", os.getcwd() + "/generated/pax/east2013/PAX-east-2013-030back.png")
+#shutil.copy(os.getcwd() + "/background/back-black.png", os.getcwd() + "/generated/pax/east2013/PAX-east-2013-030back.png")
 createCards(os.getcwd() + "/sample/pax-prime-2013.csv", os.getcwd() + "/generated/pax/prime2013/", "PAX-prime-2013-", 1, True)
 createCards(os.getcwd() + "/sample/pax-east-2014.csv", os.getcwd() + "/generated/pax/east2014/", "PAX-east-2014-", 1, True)
 createCards(os.getcwd() + "/sample/pax-east-2014-panel.csv", os.getcwd() + "/generated/pax/east2014panel/", "PAX-east-2014-panel-", 1, True)

@@ -114,8 +114,8 @@ def createCards(inputFile, outputDir, prefix="", offset=1, verbose=False):
           print "Skipping header"
         continue
       
-      if verbose:
-        print "Creating card %s with:\n\tbackground: %s\n\tfont: %s\n\ticon: %s\n\tCardText: %s\n\tNumberText: %s\n" % (outputFn, background, font, icon, cardText, numberText)
+      #if verbose:
+      print "Creating card %s with:\n\tbackground: %s\n\tfont: %s\n\ticon: %s\n\tCardText: %s\n\tNumberText: %s\n" % (outputFn, background, font, icon, cardText, numberText)
       
       createCard(outputDir + "/" + outputFn, background, font, icon, cardText, numberText, verbose)
       n += 1

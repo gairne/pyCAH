@@ -104,19 +104,28 @@ def createCard(outputFn, background, font=None, icon=None, text=None, numberText
         font = "HelveticaNeueBold"
         
     if text != None:
-      text = text.replace('"', '\\"').replace("\n", "\\n")
+      text = text.replace('"', '\\"').replace("\n", "\\n").replace("$", "\\$")
     if numberText != None:
       numberText = numberText.replace('"', '\\"').replace("\n", "\\n")
 
+    cardTextCommand = ""
+    if (text != "" and text != None):
+        if ("front-black-face3" in background):
+            cardTextCommand = " -page +444+2850 -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 15 -kerning -1 -density 1200 -size 1400x caption:\"" + text + "\""
+        elif ("front-white-face14-ladles" in background):
+            cardTextCommand = " -page +720+444 -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 15 -kerning -1 -density 1200 -size 2450x caption:\"" + text + "\""
+        else:
+            cardTextCommand = " -page +444+444 -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 15 -kerning -1 -density 1200 -size 2450x caption:\"" + text + "\""
+
     # Perform the card creation.
-    stdout, stderr = perform("convert \( -page +0+0 " + background + " \)" + (" -page +605+3865 -background none \( " + icon + " -rotate 17 \)" if (icon != "" and icon != None) else "") + (" -page +444+444 -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 15 -kerning -1 -density 1200 -size 2450x caption:\"" + text + "\"" if (text != "" and text != None) else "") + ((" -page +1950+3590 " if "front-black-pick2" in background else " -page +1850+3910 ") + " -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 5 -kerning -1 -density 1200 -size 900x -gravity East caption:\"" + numberText + "\"" if (numberText != "" and numberText != None) else "") + " -layers merge " + outputFn, verbose=verbose)
+    stdout, stderr = perform("convert \( -page +0+0 " + background + " \)" + (" -page +605+3865 -background none \( " + icon + " -rotate 17 \)" if (icon != "" and icon != None) else "") + cardTextCommand + ((" -page +1950+3590 " if "front-black-pick2" in background else " -page +1850+3890 ") + " -units PixelsPerInch -background " + cardTextBg + " -fill " + cardTextFg + " -font " + font + " -pointsize 5 -kerning -1 -density 1200 -size 900x -gravity East caption:\"" + numberText + "\"" if (numberText != "" and numberText != None) else "") + " -layers merge " + outputFn, verbose=verbose)
     
-    if ("white" in background and not "black" in background):
-        shutil.copy("background/back-white.png", outputFn[:-4] + "back" + outputFn[-4:])
-    elif ("black" in background and not "white" in background):
-        shutil.copy("background/back-black.png", outputFn[:-4] + "back" + outputFn[-4:])
-    else:
-        print "Warning: Couldn't determine which card back to use."
+    #if ("white" in background and not "black" in background):
+    #    shutil.copy("background/back-white.png", outputFn[:-4] + "back" + outputFn[-4:])
+    #elif ("black" in background and not "white" in background):
+    #    shutil.copy("background/back-black.png", outputFn[:-4] + "back" + outputFn[-4:])
+    #else:
+    #    print "Warning: Couldn't determine which card back to use."
 
 ######
 
