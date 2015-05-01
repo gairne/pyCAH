@@ -3,9 +3,10 @@
 A python program that generates high quality Cards Against Humanity cards that can be used for printing.
 
 Author: Matthew Mole <code@gairne.co.uk>
+
 This program is released under the GNU General Public License Version 3
 
-Cards Against Humanity is a card game produced by Cards Against Humanity LLC and is released under a Creative Commons BY-NC-SA 2.0 license
+Cards Against Humanity is a card game produced by Cards Against Humanity LLC and is released under a Creative Commons BY-NC-SA 2.0 license.
 Information is available at https://cardsagainsthumanity.com/
 
 -------------
